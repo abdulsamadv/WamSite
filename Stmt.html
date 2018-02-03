@@ -1,0 +1,341 @@
+<html>
+<head>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3mobile.css">
+<link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/darkly/bootstrap.min.css" rel="stylesheet">-->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="scripts2/jquery.table.transpose.min.js"></script>
+
+<style>
+    table{border-collapse: collapse;}
+    
+    .due {
+    border: 1px solid white;
+    /*background-color:13342;*/
+    color:white;
+    width:70px;
+   
+  }
+
+.btn
+{
+width:71px;
+}
+  table th {
+    border: 1px solid red;
+    background-color:Navy;
+    color:white;
+    width:60px;
+    height:30px;
+   
+  }
+  table td {
+    border: 1px solid red;
+    padding:5px;
+    text-align:center;
+    height:10px;
+    /*transform:rotate(90deg);
+  	height:150px;*/
+  }
+  
+  div.hdr
+  {
+  text-align:center;
+  background-color:Navy;
+  color:white;
+  font-weight: bold; 
+  }
+  
+  div.dtl
+  {
+  overflow:scroll;
+  position:relative;
+  clear:both;
+  }
+
+/*.loan
+{
+  transform:rotate(90deg);
+  height:150px;
+  width:3em;
+  
+}*/
+  
+     
+</style>
+</head>
+
+<body>
+
+<div >
+<label for="A/C">A/C: </label><input id="E_AC" value="?" type="text" style="width:80px"/>
+<label for="PIN">PIN: </label><input id="E_PIN" value="?" type="text" style="width:80px"/>
+<input id="Search" type="button" value="GET DETAILS" />
+</div>
+<div style="margin:5px 40px;paddig:5px">
+<input id="btnWa" type="button" value="WAM" onclick="getWam()" class="btn"/>
+<input id="btnFund" type="button" value="FUND" onclick="getFund()" class="btn"/>
+<input id="btnLoan" type="button" value="LOAN" onclick="getLoan()" class="btn"/>
+<input id="btnPayments" type="button" value="PAYMENTS" onclick="getPayments()"/>
+<input id="PIN" type="text" style="width:0px;visibility:hidden"/>
+</div>
+
+
+<!--<div><label for="Name">Hours: </label><input id="Hours" type="text" /></div>-->
+
+<div >
+	
+	<table id="tblMain" class="thc">
+    <tr><th colspan="10">WAM STATEMENT</th></tr>
+    <tr><th>DUES AS ON</th><th>WAM</th><th>FUND</th><th>TOTAL</th><td class="due"></td><th style="width:150px">LOAN BALANCE</th><td class="due"></td><th>FUND</th><th>SHARE</th><th>BALANCE</th>
+    </table>
+</div><p></P>
+<div id="divFund" class="dtl" style="visibility:hidden">
+	<div class="hdr">FUND</div>
+	<table id="tblFund" class="thc">
+    </table>
+</div>
+<div id="divWam" class="dtl" style="visibility:hidden">
+	<div class="hdr">WAM</div>
+	<table id="tblWam" class="thc">
+    </table>
+</div>
+<div id="divLoan" class="dtl" style="visibility:hidden"/>
+	<div class="hdr">LOAN</div>
+	<table id="tblLoan" class="thc">
+    </table>
+</div>
+<div id="divMonthly" class="dtl" />
+	<div class="hdr">MONTHLY PAYMENTS</div>
+	<table id="tblMonthly" class="thc">
+    </table>
+</div>
+
+<script type='text/javascript'>
+ function getWam() {
+ 	
+    $("#divLoan").css("visibility", "hidden");
+    $("#divFund").css("visibility", "hidden");
+    $("#divMonthly").css("visibility", "hidden");
+    
+    $("#divMonthly").css("position", "absolute");
+    $("#divLoan").css("position", "absolute");
+    $("#divFund").css("position", "absolute");
+   // $("#divWam").css("position", "absolute");
+    $("#divWam").css("visibility", "visible");
+ }
+ 
+ function getFund() {
+ 	
+    $("#divWam").css("visibility", "hidden");
+    $("#divLoan").css("visibility", "hidden");
+    $("#divMonthly").css("visibility", "hidden");
+    
+    $("#divMonthly").css("position", "absolute");
+    $("#divWam").css("position", "absolute");
+    $("#divLoan").css("position", "absolute");
+    $("#divFund").css("visibility", "visible");
+ }
+ 
+ function getPayments() {
+ 	
+    $("#divWam").css("visibility", "hidden");
+    $("#divFund").css("visibility", "hidden");
+    $("#divLoan").css("visibility", "hidden");
+    
+    $("#divLoan").css("position", "absolute");
+    $("#divWam").css("position", "absolute");
+    $("#divFund").css("position", "absolute");
+    $("#divMonthly").css("visibility", "visible");
+ }
+ 
+ function getLoan() {
+ 	
+    $("#divWam").css("visibility", "hidden");
+    $("#divFund").css("visibility", "hidden");
+    $("#divMonthly").css("visibility", "hidden");
+    
+    $("#divMonthly").css("position", "absolute");
+    $("#divWam").css("position", "absolute");
+    $("#divFund").css("position", "absolute");
+    $("#divLoan").css("visibility", "visible");
+ }
+
+    google.charts.load('current', {
+        callback: function () {
+            document.getElementById('Search').addEventListener('click', searchSheet, false);
+            searchSheet();
+
+            //var AcText
+            function searchSheet() {
+
+				 $("#divWam").css("visibility", "hidden");
+    			 $("#divFund").css("visibility", "hidden");
+    			 $("#divLoan").css("visibility", "hidden");
+                 $("#divMonthly").css("visibility", "hidden");
+				
+                AcText = document.getElementById('E_AC').value;
+                if (AcText == "") {
+                    alert("Please enter a valid A/C#");
+                    return;
+                }
+                PinText = document.getElementById('E_PIN').value;
+                if (PinText == "") {
+                    alert("Please enter a valid PIN#");
+                    return;
+                }
+
+                var fund = new google.visualization.Query('https://docs.google.com/spreadsheet/ccc?key=1htqDGxNVb9w8HiM481wFkk1WiEIR5e_O8ZpiBOVMHf0&sheet=FUND');
+                var wam = new google.visualization.Query('https://docs.google.com/spreadsheet/ccc?key=1htqDGxNVb9w8HiM481wFkk1WiEIR5e_O8ZpiBOVMHf0&sheet=WAM');
+               var loan = new google.visualization.Query('https://docs.google.com/spreadsheet/ccc?key=1htqDGxNVb9w8HiM481wFkk1WiEIR5e_O8ZpiBOVMHf0&sheet=LOANS');
+               var monthly = new google.visualization.Query('https://docs.google.com/spreadsheet/ccc?key=1htqDGxNVb9w8HiM481wFkk1WiEIR5e_O8ZpiBOVMHf0&sheet=Monthly');
+
+
+                if (AcText !== '') {
+                    //	ssql='select A,B,Q,R,Q - R   ,S,V where A like "' + AcText + '" AND V LIKE "' + PinText + '" LABEL  Q - R "BALANCE", S "DATE OF JOIN"'
+                    //ssql='select * where A like "' + AcText + '" AND V LIKE "' + PinText + '"'
+                    ssqlFund = 'select  W,C,E,F,G,H,I,J,K,L,M,N,O,P,Q where A like "' + AcText + '"'
+                    
+                     ssqlWam= 'select  R,D,E,F,G,H,I,J,K,L,M,N,O,P,Q where A like "' + AcText + '"'
+                     
+                              ssqlLoan= 'select  C,T,D,E,G,H,I,J,K,L,M,N,O,P,Q,R,S where A like "' + AcText + '"'
+                      
+                    // ssqlMonthly= 'select Q,E,F,G,H,I,J,K,L,M,N,O,P where A like "' + AcText + '"'
+                    
+                     ssqlMonthly= 'select Q,E,F,G,H,I,J,K,L,M,N,O,P,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH  where A like "' + AcText + '"'
+                    
+                    fund.setQuery(ssqlFund);
+                    wam.setQuery(ssqlWam);
+                    loan.setQuery(ssqlLoan);
+                    monthly.setQuery(ssqlMonthly);
+                    
+                    
+                   // var strbldr = ""//'<colgroup> <col width="114"/><col width="72" /><col width="61" /><col width="63" /><col width="53" /></colgroup>';
+                    getValue(fund, "tblFund");
+                    getValue(wam, "tblWam");
+                    getValue(loan, "tblLoan");
+                   getValue(monthly, "tblMonthly");
+
+                }
+            }
+            
+            function formatDate(value,cols)
+{
+   var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+   if(cols==1)	
+   return  monthNames[value.getMonth()] + "/" + value.getFullYear();
+   else
+   return value.getDate() + "/" + monthNames[value.getMonth()] + "/" + value.getFullYear();
+}
+            
+            function getValue(funds, divId) {
+               // alert(divId);
+                funds.send(function (response) {
+                    if (response.isError()) {
+                        console.log('Error in ID Validation Query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+                        return;
+                    }
+
+                    document.getElementById(divId).innerHTML = ""
+                    var datatable = response.getDataTable();
+
+                    oPinText = document.getElementById('PIN').value;
+                    if (datatable.getNumberOfRows() == 0 & PinText != '?') {
+                        alert("INVALID COMBINATION OF A/C# AND PIN#");
+                        return;
+                    }
+
+             
+                    var startI=0;
+                    
+
+					if(divId=="tblFund" || divId=="tblWam" || divId=="tblMonthly")
+                    {
+                    	startI=2;					
+                   		var txtName="WAM STATEMENT FOR "+datatable.getValue(0, 1) +" ( AC#: " +datatable.getValue(0, 0) +" )"
+                   // alert(txtName);
+					$("#divMain").html(txtName);
+                    }
+                    else if (divId=="tblLoan")
+                    {
+                    	//alert("Inide");
+                    	startI=0;
+                    }
+                    
+                   // alert(startI);
+
+                  var  strbldr =  "";
+                   /* for (var i = startI; i < datatable.getNumberOfRows(); i++) {
+                    	
+                        	strbldr = strbldr + "<th>" + datatable.getValue(0,i) + "</th>";
+                    }
+                    strbldr = strbldr + "</tr>";
+                    */
+                   // alert(strbldr);
+					//var tempTd="12/12/2012';
+                    for (var k = 0; k < datatable.getNumberOfColumns(); k++) {
+						if(k==0)
+                        	strbldr = strbldr + "<tr><th>"+datatable.getColumnLabel(k)+"</th>";
+                        else
+                        	strbldr = strbldr + "<tr><td>"+datatable.getColumnLabel(k)+"</td>";
+                        for (var j = 0; j < datatable.getNumberOfRows(); j++) {
+                        
+                        	var tempTd=datatable.getValue(j, k);
+                           // alert(divId+"  "+tempTd);
+                           if( divId=="tblLoan"  && tempTd !== null)
+                            {
+                            	//alert(j + "   "+tempTd);
+                            	if(j==1||j==4||j== 5||j==6||j==7||j==8||j==9||j==10||j==11||j==12||j==13||j==14||j==15)
+                                {
+                                	tempTd=formatDate(tempTd,j);
+                                    //alert(tempTd);
+                                }
+                            }
+                            else if(tempTd==null ||tempTd==0)
+                            {
+                            	tempTd="-";
+                            }
+                            
+                           /* if(divId=="tblLoan")
+                            	strbldr = strbldr + "<td class='loan'>" + tempTd+"</td>";
+                            else*/
+                            	if( k==0)
+                                	strbldr = strbldr + "<th>" + tempTd+"</th>";
+                                else
+                                	strbldr = strbldr + "<td>" + tempTd+"</td>";
+                            //alert(datatable.getValue(0, j));
+                        }
+                       // $( ".datetd" ).datepicker({ dateFormat: 'yy-dd-mm' });
+                       strbldr = strbldr +"</tr>"
+                    }
+                  // alert(strbldr);
+                   // alert(datatable.getNumberOfRows());
+                    document.getElementById(divId).innerHTML = strbldr;
+                   // if (!$("#tbl").is(":blk-transpose"))
+                     //   $("#tbl").transpose({ mode: 0 });
+                   // $("#tbl").transpose("transpose");
+                   
+                   // $("#divWam").css("visibility", "visible");
+   					//$("#divFund").css("visibility", "visible");
+    
+    				$("#divWam").css("position", "absolute");
+     				$("#divFund").css("position", "absolute");
+    				//$("#divLoan").css("visibility", "hidden");
+                   
+                   var tds = document.getElementsByTagName("td");
+
+/*for(var i = 0, j = tds.length; i < j; ++i)
+       tds[i].style.color = "#00AA00";*/
+       
+                });
+            }
+        },
+        packages: ['table']
+    });
+</script>
+</body>
+</html>
